@@ -1,0 +1,35 @@
+
+
+   public function ejecutarConsulta($consulta) {
+        $resultado = $this->conexion->query($consulta);
+        if ($resultado === false) {
+            return "Error al ejecutar la consulta: " . $this->conexion->error . " (Código de error: " . $this->conexion->errno . ")";
+        } else {
+            if ($resultado->num_rows > 0) {
+                if ($resultado instanceof mysqli_result) {
+                    $datos = array();
+    
+                    // Obtener los nombres de las columnas
+                    $nombres_columnas = array();
+                    while ($info_columna = $resultado->fetch_field()) {
+                        $nombres_columnas[] = $info_columna->name;
+                    }
+                    $datos['columnas'] = $nombres_columnas;
+    
+                    // Obtener los datos de las filas
+                    $filas = array();
+                    while ($fila = $resultado->fetch_assoc()) {
+                        $filas[] = $fila;
+                    }
+                    $datos['filas'] = $filas;
+    
+                    return $datos;
+                } else {
+                    return "Consulta ejecutada correctamente.";
+                }
+            } else {
+                return "La consulta no devolvió ningún resultado.";
+            }
+        }
+    }
+    
